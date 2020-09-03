@@ -1,0 +1,574 @@
+{
+	"info": {
+		"_postman_id": "4232959a-2c29-4335-90db-b1bf13ae1c4e",
+		"name": "Freshworks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Scenario1",
+			"item": [
+				{
+					"name": "Get Authentication key",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Api-Version",
+								"value": "alpha",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n  \"grant_type\": \"authorization_code\",\r\n  \"client_secret\": \"912b77fa140c0a499cbf08fb5f3adeb4a0d70409a8d7b232d5f7621ff9ea7e76\",\r\n  \"code\": \"e66e29b57467263fca79473194f66461ace3990825ce58ec87788b031a158281\",\r\n  \"client_id\": \"ee5707bb10e34d81e1160ec27c89439ad244a4e87bd45ec6cea6acf7280e2c66\",\r\n  \"redirect_uri\": \"https://my.freshbooks.com/\"\r\n} "
+						},
+						"url": {
+							"raw": "https://api.freshbooks.com/auth/oauth/token",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"auth",
+								"oauth",
+								"token"
+							]
+						},
+						"description": "To get the bearer token for Authentication"
+					},
+					"response": []
+				},
+				{
+					"name": "Get AccountId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bf380d0c-6965-45bd-af74-385743eb6bec",
+								"exec": [
+									"var rep =pm.response.json();\r",
+									"console.log(rep.response.roles[0].accountid);\r",
+									"console.log(rep.response.groups[0].business_id);\r",
+									"var id1=rep.response.groups[0].business_id;\r",
+									"var id=rep.response.roles[0].accountid;\r",
+									"pm.globals.set(\"accountid\", id);\r",
+									"pm.globals.set(\"business_id\",id1)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Api-Version",
+								"value": "alpha",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.freshbooks.com/auth/api/v1/users/me",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"auth",
+								"api",
+								"v1",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cretae single line estimate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "528b480b-8a6a-4907-9a50-0e32061d6fd6",
+								"exec": [
+									"var res=pm.response.json();\r",
+									"console.log(res.response.result.estimate.customerid);\r",
+									"var id =res.response.result.estimate.estimateid;\r",
+									"var id1 =res.response.result.estimate.id;\r",
+									"pm.globals.set(\"estimateid\", id);\r",
+									"pm.globals.set(\"id\", id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Api-Version",
+								"value": "alpha",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n     \"estimate\":\r\n      {\r\n    \"email\": \"dhayalangambhir@gmail.com\",\r\n    \"create_date\": \"2020-09-02\",\r\n    \"customerid\": 93243\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://api.freshbooks.com/accounting/account/{{accountid}}/estimates/estimates",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"accounting",
+								"account",
+								"{{accountid}}",
+								"estimates",
+								"estimates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit the Single line estimate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1cce45f0-998e-49f5-90f2-738641a5143f",
+								"exec": [
+									"var rep =pm.response.json();\r",
+									"console.log(rep.response.result.estimate.address)\r",
+									"\r",
+									" pm.test(\"Body matches string\", function () {\r",
+									"pm.expect(rep.response.result.estimate.address).to.include(\"T Nagar\");\r",
+									" });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6ba82486e5b4e606bd12b1656f4cfb9147bb4ff4f617b844e7ad5f5f7bbbf921",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Api-Version",
+								"value": "alpha",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n     \"estimate\":\r\n      {\r\n    \"create_date\": \"2020-09-03\",\r\n    \"customerid\": 93243,\r\n    \"address\": \"T Nagar\"\r\n  }\r\n    \r\n \r\n}"
+						},
+						"url": {
+							"raw": "https://api.freshbooks.com/accounting/account/{{accountid}}/estimates/estimates/{{id}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"accounting",
+								"account",
+								"{{accountid}}",
+								"estimates",
+								"estimates",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get created estimate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a8e420a4-76f7-4817-9956-fce5bf7c2fa4",
+								"exec": [
+									" var rep =pm.response.json();\r",
+									"console.log(rep.response.result.estimate.address)\r",
+									" \r",
+									" pm.test(\"Body matches string\", function () {\r",
+									"pm.expect(rep.response.result.estimate.address).to.include(\"T Nagar\");\r",
+									" });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Api-Version",
+								"value": "alpha",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.freshbooks.com/accounting/account/{{accountid}}/estimates/estimates/{{estimateid}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"accounting",
+								"account",
+								"{{accountid}}",
+								"estimates",
+								"estimates",
+								"{{estimateid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Scenario 2",
+			"item": [
+				{
+					"name": "Create time limit entry",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Api-Version",
+								"type": "text",
+								"value": "alpha"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"time_entry\": {\r\n        \"is_logged\": true,\r\n        \"duration\": 7201,\r\n        \"note\": \"Stuff2\",\r\n        \"started_at\": \"2020-09-03T20:30:00Z\",\r\n        \"client_id\": 93243\r\n    }\r\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "https://api.freshbooks.com/timetracking/business/{{business_id}}/time_entries",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"timetracking",
+								"business",
+								"{{business_id}}",
+								"time_entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Time entry",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4dc9d90b-e49c-4464-996f-c3001dab097e",
+								"exec": [
+									"var re =pm.response.json();\r",
+									"console.log((re.time_entries).length);\r",
+									"var count=(re.time_entries).length;\r",
+									"var notes=[];\r",
+									"//console.log(re.time_entries[0].note)\r",
+									"for(var i=0;i<count;i++)\r",
+									"{\r",
+									"    var estimate= re.time_entries[i].note;\r",
+									"    notes.push(estimate)\r",
+									"\r",
+									"}\r",
+									"var n=notes.includes(\"Stuff2\")\r",
+									"console.log(n)\r",
+									"\r",
+									"if(n=true)\r",
+									"{\r",
+									"    var index = notes.indexOf(\"Stuff2\");\r",
+									"    console.log(index);\r",
+									"    pm.test(\"Body matches string\", function () {\r",
+									"        pm.expect(re.time_entries[index].note).to.include(\"Stuff\");\r",
+									"    });\r",
+									"     \r",
+									"    var id=re.time_entries[index].id\r",
+									"\r",
+									"    pm.globals.set(\"uniquetimeid\", id);\r",
+									"}\r",
+									"else{\r",
+									"\r",
+									"    pm.test(\"Body matches string\", function () {\r",
+									"        pm.expect(pm.response).to.include(\"Stuff\");\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.freshbooks.com/timetracking/business/{{business_id}}/time_entries",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"timetracking",
+								"business",
+								"{{business_id}}",
+								"time_entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get the newly cretated time entry",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.freshbooks.com/timetracking/business/{{business_id}}/time_entries/{{uniquetimeid}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"timetracking",
+								"business",
+								"{{business_id}}",
+								"time_entries",
+								"{{uniquetimeid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the created time entry",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"time_entry\": {\r\n      \"is_logged\": true,\r\n      \"duration\": 600,\r\n      \"note\": \"Stuff35\",\r\n      \"started_at\": \"2020-09-03T20:30:00Z\",\r\n      \"timer\": {\r\n          \"id\": {{uniquetimeid}}\r\n      },\r\n      \"client_id\": 93243\r\n     \r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://api.freshbooks.com/timetracking/business/{{business_id}}/time_entries/{{uniquetimeid}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"timetracking",
+								"business",
+								"{{business_id}}",
+								"time_entries",
+								"{{uniquetimeid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete the created request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b9b13228c3ec18d6c8459587d58b19c7260eb8e53214bcae7fa985855851fe96",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://api.freshbooks.com/timetracking/business/{{business_id}}/time_entries/{{uniquetimeid}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"freshbooks",
+								"com"
+							],
+							"path": [
+								"timetracking",
+								"business",
+								"{{business_id}}",
+								"time_entries",
+								"{{uniquetimeid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
